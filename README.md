@@ -58,3 +58,7 @@ Make sure your url path does not have a `/` at the end for example http://localh
 ERRORS:
 ?: (corsheaders.E014) Origin 'http://localhost:3000/' in CORS_ORIGIN_WHITELIST should not have path
 ```
+
+## Nested Models
+
+![Nested!](https://i.imgur.com/TI9tKH6.png "Nested Model")

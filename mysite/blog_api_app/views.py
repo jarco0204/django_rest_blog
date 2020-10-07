@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .models import User, BlogPost
-from .serializers import UserSerializer, BlogPostSerializerPOST, BlogPostSerializerGET
+from .models import User, BlogPost, Reply
+from .serializers import UserSerializer, BlogPostSerializer, ReplySerializer
 from django.http import JsonResponse
 from rest_framework.parsers import JSONParser
 from rest_framework.decorators import api_view
@@ -26,23 +26,41 @@ def user_list(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET'])
-def post_list_get(request):
+@api_view(['GET', 'POST', 'DELETE'])
+def post_list(request):
     if request.method == "GET":
         posts = BlogPost.objects.all()
-        serializer = BlogPostSerializerGET(posts, many=True)
+        serializer = BlogPostSerializer(posts, many=True)
         return Response(serializer.data)
 
-
-@api_view(['POST', 'DELETE'])
-def post_list_post(request):
-    if request.method == "POST":
-        serializer = BlogPostSerializerPOST(data=request.data)
+    elif request.method == "POST":
+        serializer = BlogPostSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     elif request.method == "DELETE":
         posts = BlogPost.objects.all()
+        posts.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['GET', 'POST', 'DELETE'])
+def reply_list(request):
+    if request.method == "GET":
+        replies = Reply.objects.all()
+        serializer = ReplySerializer(replies, many=True)
+        return Response(serializer.data)
+
+    elif request.method == "POST":
+        serializer = ReplySerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == "DELETE":
+        posts = Reply.objects.all()
         posts.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

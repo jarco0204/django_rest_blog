@@ -12,7 +12,8 @@ class User(models.Model):
 
 
 class BlogPost(models.Model):
-    user = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, null=True, related_name='posts', on_delete=models.CASCADE)
     topic = models.CharField(max_length=100)
     title = models.CharField(max_length=100)
     content = models.CharField(max_length=500)
@@ -21,3 +22,11 @@ class BlogPost(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Reply(models.Model):
+    post = models.ForeignKey(
+        BlogPost, related_name="replies", on_delete=models.CASCADE)
+    title = models.CharField(max_length=100)
+    content = models.CharField(max_length=100)
+    date = models.DateField(auto_now=True)
